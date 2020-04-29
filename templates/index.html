@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div>
+<canvas id="myCanvas" width="700" height="500">Error</canvas>
+</div>
+<div>
+<span id="classificationLabel"></span>
+</div>  
+<script>
+    var lastUtterance = 0;
+    var classLabel = document.getElementById("classificationLabel");
+    var cw = 700;
+    var ch = 500;
+    var source = new EventSource("{{ url_for('sse.stream') }}");
+    source.addEventListener('pixels', function(event) {
+        var data = JSON.parse(event.data);
+        updateCanvas(data.message);
+    }, false);
+
+    source.addEventListener('classification', function(event) {
+          var data = JSON.parse(event.data);
+          classLabel.innerHTML = data.message;
+          var currTime = (new Date()).getTime();
+          if (currTime > lastUtterance + 2000 && data.message === "Person detected") {
+            speechSynthesis.speak(new SpeechSynthesisUtterance("IOT security, identify yourself"));		
+            lastUtterance = currTime;
+          }	
+    }, false);
+    // multiplier of the final security camera feed size e.g. originally 32 x 32 => 480 x 480 with numDuplicates = 15 
+    var numDuplicates = 15;
+    function updateCanvas(data) {
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    var imgData = ctx.createImageData(32 * numDuplicates, 32 * numDuplicates);
+    
+
+    newdata = []
+    for (odc = 0; odc < 32; odc++) {
+      for (col = 0; col < numDuplicates; col++) {
+        for (dc = 0; dc < 32; dc ++) {
+          for (row = 0; row < numDuplicates; row++) {
+            newdata.push(data[32*odc + dc]);
+          
+          }
+        }
+      }
+    }
+    var i;
+    for (dc = 0; dc < imgData.data.length; dc += 4) {
+        imgData.data[dc+0] = newdata[dc/4][0];
+        imgData.data[dc+1] = newdata[dc/4][1];
+        imgData.data[dc+2] = newdata[dc/4][2];
+        imgData.data[dc+3] = 255;
+    }
+  
+	  ctx.putImageData(imgData, 0, 0);
+
+
+    }
+  </script>
+</body>
+</html>
+
