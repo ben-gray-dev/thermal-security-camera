@@ -15,8 +15,14 @@ with open('person_absent.json', 'r') as f:
 with open('person_absent_2.json', 'r') as f:
     absent_data += json.load(f)
 
+with open('person_absent_3.json', 'r') as f:
+    absent_data += json.load(f)    
+
 with open('person_present.json', 'r') as f:
     present_data = json.load(f)
+
+with open('person_present_2.json', 'r') as f:
+    present_data += json.load(f)
 
 target_data = ([0] * len(absent_data)) + ([1] * len(present_data))
 data = absent_data + present_data
