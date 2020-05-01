@@ -33,7 +33,7 @@ pip3 install requirements.txt
 
 ### Setup Redis on the pi
 
-Following the guide found ![here](https://habilisbest.com/install-redis-on-your-raspberrypi), I've pulled out and cleaned up the steps:
+Following the guide found [here](https://habilisbest.com/install-redis-on-your-raspberrypi), I've pulled out and cleaned up the steps:
 
 ```
 cd ~
